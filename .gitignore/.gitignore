@@ -1,0 +1,230 @@
+//Veb_stranica.php
+
+<?php
+class Veb_stranica {
+   protected $seo_naslov;
+   protected $seo_kljucne_reci;
+   protected $seo_opis_stranice;
+   
+   protected $naslov;
+   protected $sadrzaj;
+   
+   protected $tip_stranice;
+   protected $poseban_sadrzaj;
+   
+   protected $jezik='sr';
+   protected $ikonica;
+   
+   public function __construct($seo_naslov, $seo_opis_stranice, $naslov, $tip_stranice) {
+       $this->seo_naslov = $seo_naslov;
+       $this->seo_opis_stranice = $seo_opis_stranice;
+       $this->naslov = $naslov;
+       $this->tip_stranice = $tip_stranice;
+   }
+   public function getSeo_naslov() {
+       return $this->seo_naslov;
+   }
+
+   public function getSeo_kljucne_reci() {
+       return $this->seo_kljucne_reci;
+   }
+
+   public function getSeo_opis_stranice() {
+       return $this->seo_opis_stranice;
+   }
+
+   public function getNaslov() {
+       return $this->naslov;
+   }
+
+   public function getSadrzaj() {
+       return $this->sadrzaj;
+   }
+
+   public function getTip_stranice() {
+       return $this->tip_stranice;
+   }
+
+   public function getPoseban_sadrzaj() {
+       return $this->poseban_sadrzaj;
+   }
+
+   public function getJezik() {
+       return $this->jezik;
+   }
+
+   public function getIkonica() {
+       return $this->ikonica;
+   }
+
+   public function setSeo_naslov($seo_naslov) {
+       $this->seo_naslov = $seo_naslov;
+   }
+
+   public function setSeo_kljucne_reci($seo_kljucne_reci) {
+       $this->seo_kljucne_reci = $seo_kljucne_reci;
+   }
+
+   public function setSeo_opis_stranice($seo_opis_stranice) {
+       $this->seo_opis_stranice = $seo_opis_stranice;
+   }
+
+   public function setNaslov($naslov) {
+       $this->naslov = $naslov;
+   }
+
+   public function setSadrzaj($sadrzaj) {
+       $this->sadrzaj = $sadrzaj;
+   }
+
+   public function setTip_stranice($tip_stranice) {
+       if(in_array($tip_stranice, ['tekst', 'proizvodi', 'kontakt'])) {
+       $this->tip_stranice = $tip_stranice;
+   } else {
+       $this->tip_stranice = 'tekst';
+   }
+   }
+   public function setPoseban_sadrzaj($poseban_sadrzaj) {
+       $this->poseban_sadrzaj = $poseban_sadrzaj;
+   }
+
+   public function setJezik($jezik) {
+       if (in_array($jezik, ['sr', 'en'])) {
+       $this->jezik = $jezik;
+       } else {
+       $this->jezik = 'sr';
+
+       }
+   }
+
+   public function setIkonica($ikonica) {
+       $this->ikonica = $ikonica;
+   }
+   public function generisiHTML() {
+       require 'Sablon_stranica.php';
+   }
+   }
+   
+   
+   
+//Sablon_stranica
+<!DOCTYPE html>
+<html lang="<?php echo $this->getJezik() ?>">
+    <head>
+        <meta charset="UTF-8">
+        <title><?php echo htmlspecialchars($this->getSeo_naslov()); ?></title>
+        <?php if ($this->getSeo_kljucne_reci()): ?>
+            <meta name='keywords' content='<?php echo htmlspecialchars($this->getSeo_kljucne_reci()); ?>'
+        <?php endif; ?>
+         <?php if ($this->getSeo_opis_stranice()): ?>
+            <meta name='description' content='<?php echo htmlspecialchars($this->getSeo_opis_stranice()); ?>'
+        <?php endif; ?>
+         <?php if ($this->getIkonica()): ?>
+            <meta rel='shortcut icon' href='<?php echo htmlspecialchars($this->getIkonica()); ?>'
+        <?php endif; ?>
+    </head>
+    <body>
+        <div id='wraper'>
+            <div id='header'>
+                <img src='' alt='logo kompanije'>    
+            </div>
+            <div id='nav'>
+                <ul>
+                    <li><a href='#'>Pocetna</a></li>
+                    <li><a href='#'>O nama</a></li>
+                    <li><a href='#'>Proizvodi</a></li>
+                    <li><a href='#'>Usluge</a></li>
+                    <li><a href='#'>Kontakt</a></li>
+                </ul>
+            </div>   
+            <div id='main'>
+                <h1><?php echo htmlspecialchars($this->getSeo_naslov()); ?></h1>
+                
+                <?php if($this->getTip_stranice() == 'tekst'): ?>
+                <div class='text'>
+                    <?php echo $this->getSardzaj(); ?>
+                </div>
+                <?php elseif ($this->getTip_stranice() == 'proizvodi'): ?>
+                <div class='products'>
+                    <?php if ($this->getPoseban_sadrzaj() and is_array($this->getPoseban_sadrzaj())){
+                    foreach ($this->getPoseban_sadrzaj() as $proizvod) {
+                        require 'Sablon_proizvoda.php';
+                    } 
+                    }                      
+                    ?>
+                </div>
+                <?php elseif ($getTip_stranice() == 'kontakt'): ?>
+                <div class='kontakt'>
+                    <?php if ($this->getPoseban_sadrzaj() and is_object($this->getPoseban_sadzaj())): ?>
+                    Ime i prezime: <?php echo htmlspecialchars($this->getPoseban_sadrzaj()->imeIPrezime); ?> <br>
+                    Telefon: <?php echo htmlspecialchars($this->getPoseban_sadrzaj()->Telefon); ?> <br>
+                    e-mail: <a href="mailto <?php echo htmlspecialchars($this->getPoseban_sadrzaj()->email); ?> "
+                               <?php echo htmlspecialchars($this->getPoseban_sadrzaj()->email); ?> 
+                </a>
+                </div>
+                <?php else: ?>
+                    <!-- Nepoznat tip stranice -->
+                <?php endif; ?> 
+                    <?php endif; ?>
+                <div id='footer'>
+                    &copy; <?php echo date('Y'); ?> ta i ta Kompanija
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+
+//Sablon_proizvoda
+<div class='proizvod'>
+    <h2><?php echo htmlspecialchars($proizvod['naslov']); ?></h2>
+    <div class='opis'>
+        <?php echo htmlspecialchars($proizvod['opis']); ?>
+    </div>
+    <div class='cena'>
+        <?php echo htmlspecialchars($proizvod['cena']); ?> &euro;
+    </div>
+</div>
+
+
+
+//index.php
+<?php
+   /* $seo_naslov = 'Stranica O nama-Kompanija ta i ta';
+    $naslov     = 'O nama';
+    $godina     = date('Y');
+    $proizvodi  = [
+        [
+            'naslov' => 'Tastatura',
+            'opis'   => 'Najjaca tastatura',
+            'cena'   => '85'
+        ],
+        [
+            'naslov' => 'Mis',
+            'opis'   => 'Najjaci Mis',
+            'cena'   => '48'
+        ]
+    ];*/
+    require 'Veb_stranica.php';
+    $vs1 = new Veb_stranica('Stranica o nama', 'Ovo je stranica sa tekstom o nama', 'O nama', 'tekst');
+    $vs1->setSadrzaj("Poceli smo sa radom!Kompanija postoji nekoliko godina I sada jos neki tekst ovde i tako");
+    $vs1->setSeo_kljucne_reci('o nama, stranica, upoznavanje');
+    
+    $vs1->generisiHTML();
+/*$vs2 = new Veb_stranica('Stranica sa katalogom proizvoda', 'Ovde mozete videti nase proizvode', 'Proizvodi', 'Proizvodi');
+$vs2->setPoseban_sadrzaj([
+    [
+            'naslov' => 'Tastatura',
+            'opis'   => 'Najjaca tastatura',
+            'cena'   => '85'
+        ],
+        [
+            'naslov' => 'Mis',
+            'opis'   => 'Najjaci Mis',
+            'cena'   => '48'
+        ]
+]);
+$vs2->generisiHTML();*/
+
+        
